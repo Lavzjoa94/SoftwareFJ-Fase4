@@ -7,10 +7,6 @@
 from abc import ABC, abstractmethod
 import logging
 
-# =============================================================================
-# CONFIGURACIÓN DEL SISTEMA DE LOGS
-# =============================================================================
-
 logging.basicConfig(
     filename="software_fj.log",
     level=logging.INFO,
@@ -50,8 +46,6 @@ class Entidad(ABC):
 
 # =============================================================================
 # CLASE CLIENTE
-# =============================================================================
-# Representa los clientes registrados en el sistema.
 # =============================================================================
 
 class Cliente(Entidad):
@@ -359,6 +353,28 @@ if __name__ == "__main__":
                 impuesto=19
             )
         )
+
+        print("\n--- PRUEBA TRY / EXCEPT / ELSE ---")
+
+        try:
+
+            cliente_prueba = Cliente(
+                "Carlos",
+                "carlos@email.com",
+                "3019998888"
+            )
+
+        except ValidationError as e:
+
+            print(
+                f"Error: {e}"
+            )
+
+        else:
+
+            print(
+                "Cliente registrado correctamente."
+            )
 
         print("\n--- PRUEBA DE EXCEPCIONES ---")
 
