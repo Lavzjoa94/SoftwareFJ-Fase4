@@ -4,18 +4,13 @@
 # FASE 4 - PROGRAMACIÓN ORIENTADA A OBJETOS
 # =============================================================================
 
-# Permite crear clases abstractas.
 from abc import ABC, abstractmethod
-
-# Permite registrar eventos en archivos de log.
 import logging
 
 
 # =============================================================================
 # CONFIGURACIÓN DEL SISTEMA DE LOGS
 # =============================================================================
-# Todos los eventos importantes quedan almacenados en el archivo:
-# software_fj.log
 
 logging.basicConfig(
     filename="software_fj.log",
@@ -31,12 +26,10 @@ logger = logging.getLogger("SoftwareFJ")
 # EXCEPCIONES PERSONALIZADAS
 # =============================================================================
 
-# Excepción base del sistema.
 class SoftwareFJError(Exception):
     pass
 
 
-# Excepción utilizada para errores de validación.
 class ValidationError(SoftwareFJError):
     pass
 
@@ -53,9 +46,74 @@ class Entidad(ABC):
 
 
 # =============================================================================
+# CLASE CLIENTE
+# =============================================================================
+# Representa los clientes registrados en el sistema.
+# Implementa encapsulación mediante atributos privados.
+# =============================================================================
+
+class Cliente(Entidad):
+
+    def __init__(self, nombre, correo, telefono):
+
+        self.__nombre = nombre
+        self.__correo = correo
+        self.__telefono = telefono
+
+        self.validar()
+
+        logger.info(
+            f"Cliente registrado: {self.__nombre}"
+        )
+
+    @property
+    def nombre(self):
+        return self.__nombre
+
+    @property
+    def correo(self):
+        return self.__correo
+
+    @property
+    def telefono(self):
+        return self.__telefono
+
+    def validar(self):
+
+        if len(self.__nombre.strip()) < 3:
+            raise ValidationError(
+                "El nombre debe tener al menos 3 caracteres."
+            )
+
+        if "@" not in self.__correo:
+            raise ValidationError(
+                "Correo electrónico inválido."
+            )
+
+        if len(self.__telefono) < 10:
+            raise ValidationError(
+                "Número telefónico inválido."
+            )
+
+    def __str__(self):
+
+        return (
+            f"Cliente: {self.__nombre} | "
+            f"Correo: {self.__correo} | "
+            f"Teléfono: {self.__telefono}"
+        )
+
+
+# =============================================================================
 # PRUEBA DEL SISTEMA
 # =============================================================================
 
 if __name__ == "__main__":
 
-    print("Configuración inicial completada")
+    cliente = Cliente(
+        "Luis Villada",
+        "luis@email.com",
+        "3001234567"
+    )
+
+    print(cliente)
