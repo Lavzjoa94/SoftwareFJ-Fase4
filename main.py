@@ -7,12 +7,8 @@
 from abc import ABC, abstractmethod
 import logging
 
-
 # =============================================================================
 # CONFIGURACIÓN DEL SISTEMA DE LOGS
-# =============================================================================
-# Todos los eventos importantes serán almacenados en el archivo:
-# software_fj.log
 # =============================================================================
 
 logging.basicConfig(
@@ -37,11 +33,12 @@ class ValidationError(SoftwareFJError):
     pass
 
 
+class OperationError(SoftwareFJError):
+    pass
+
+
 # =============================================================================
 # CLASE ABSTRACTA ENTIDAD
-# =============================================================================
-# Representa una entidad genérica del sistema.
-# Todas las clases hijas deben implementar el método validar().
 # =============================================================================
 
 class Entidad(ABC):
@@ -54,9 +51,6 @@ class Entidad(ABC):
 # =============================================================================
 # CLASE CLIENTE
 # =============================================================================
-# Representa los clientes registrados en el sistema.
-# Implementa encapsulación mediante atributos privados.
-# =============================================================================
 
 class Cliente(Entidad):
 
@@ -67,10 +61,6 @@ class Cliente(Entidad):
         self.__telefono = telefono
 
         self.validar()
-
-        logger.info(
-            f"Cliente registrado: {self.__nombre}"
-        )
 
     @property
     def nombre(self):
@@ -113,11 +103,6 @@ class Cliente(Entidad):
 # =============================================================================
 # CLASE ABSTRACTA SERVICIO
 # =============================================================================
-# Define el comportamiento común para todos los servicios.
-# Toda clase hija debe implementar:
-# - calcular_costo()
-# - describir()
-# =============================================================================
 
 class Servicio(ABC):
 
@@ -127,10 +112,6 @@ class Servicio(ABC):
         self.precio_base = precio_base
 
         self.validar()
-
-        logger.info(
-            f"Servicio creado: {self.nombre}"
-        )
 
     def validar(self):
 
@@ -156,8 +137,6 @@ class Servicio(ABC):
 # =============================================================================
 # SERVICIO DE RESERVA DE SALA
 # =============================================================================
-# Permite gestionar reservas de salas para reuniones y eventos.
-# =============================================================================
 
 class ReservaSala(Servicio):
 
@@ -181,8 +160,6 @@ class ReservaSala(Servicio):
 
 # =============================================================================
 # SERVICIO DE ALQUILER DE EQUIPOS
-# =============================================================================
-# Permite alquilar equipos tecnológicos por días.
 # =============================================================================
 
 class AlquilerEquipo(Servicio):
@@ -208,8 +185,6 @@ class AlquilerEquipo(Servicio):
 # =============================================================================
 # SERVICIO DE ASESORÍA ESPECIALIZADA
 # =============================================================================
-# Permite contratar asesorías profesionales por horas.
-# =============================================================================
 
 class Asesoria(Servicio):
 
@@ -232,6 +207,55 @@ class Asesoria(Servicio):
 
 
 # =============================================================================
+# CLASE RESERVA
+# =============================================================================
+# Relaciona un cliente con un servicio.
+# Permite gestionar el estado de la reserva.
+# =============================================================================
+
+class Reserva:
+
+    def __init__(self, cliente, servicio, duracion):
+
+        if duracion <= 0:
+            raise ValidationError(
+                "La duración debe ser mayor que cero."
+            )
+
+        self.cliente = cliente
+        self.servicio = servicio
+        self.duracion = duracion
+
+        self.estado = "PENDIENTE"
+
+    def confirmar(self):
+
+        if self.estado == "CONFIRMADA":
+            raise OperationError(
+                "La reserva ya fue confirmada."
+            )
+
+        self.estado = "CONFIRMADA"
+
+    def procesar(self):
+
+        if self.estado != "CONFIRMADA":
+            raise OperationError(
+                "Solo se pueden procesar reservas confirmadas."
+            )
+
+        return self.servicio.calcular_costo()
+
+    def __str__(self):
+
+        return (
+            f"Cliente: {self.cliente.nombre} | "
+            f"Servicio: {self.servicio.nombre} | "
+            f"Estado: {self.estado}"
+        )
+
+
+# =============================================================================
 # PRUEBA DEL SISTEMA
 # =============================================================================
 
@@ -249,31 +273,23 @@ if __name__ == "__main__":
         20
     )
 
-    equipo = AlquilerEquipo(
-        "Computador",
-        50,
-        3
-    )
-
-    asesoria = Asesoria(
-        "Python",
-        80,
-        2
+    reserva = Reserva(
+        cliente,
+        sala,
+        4
     )
 
     print(cliente)
 
-    print("\n--- SERVICIOS DISPONIBLES ---")
+    print("\n--- PRUEBA DE RESERVA ---")
 
-    print(sala.describir())
-    print("Costo:", sala.calcular_costo())
+    print(reserva)
 
-    print()
+    reserva.confirmar()
 
-    print(equipo.describir())
-    print("Costo:", equipo.calcular_costo())
+    print(reserva)
 
-    print()
-
-    print(asesoria.describir())
-    print("Costo:", asesoria.calcular_costo())
+    print(
+        "Costo:",
+        reserva.procesar()
+    )
