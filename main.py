@@ -209,9 +209,6 @@ class Asesoria(Servicio):
 # =============================================================================
 # CLASE RESERVA
 # =============================================================================
-# Relaciona un cliente con un servicio.
-# Permite confirmar, cancelar y procesar reservas.
-# =============================================================================
 
 class Reserva:
 
@@ -264,46 +261,66 @@ class Reserva:
 
 
 # =============================================================================
-# PRUEBA DEL SISTEMA
+# PRUEBAS DEL SISTEMA
 # =============================================================================
 
 if __name__ == "__main__":
 
-    cliente = Cliente(
-        "Luis Villada",
-        "luis@email.com",
-        "3001234567"
-    )
+    try:
 
-    sala = ReservaSala(
-        "Sala Premium",
-        100,
-        20
-    )
+        cliente = Cliente(
+            "Luis Villada",
+            "luis@email.com",
+            "3001234567"
+        )
 
-    reserva = Reserva(
-        cliente,
-        sala,
-        4
-    )
+        sala = ReservaSala(
+            "Sala Premium",
+            100,
+            20
+        )
 
-    print(cliente)
+        reserva = Reserva(
+            cliente,
+            sala,
+            4
+        )
 
-    print("\n--- PRUEBA DE RESERVA ---")
+        print(cliente)
 
-    print(reserva)
+        print("\n--- PRUEBA DE RESERVA ---")
 
-    reserva.confirmar()
+        print(reserva)
 
-    print(reserva)
+        reserva.confirmar()
 
-    print(
-        "Costo:",
-        reserva.procesar()
-    )
+        print(reserva)
 
-    print("\n--- PRUEBA DE CANCELACIÓN ---")
+        print(
+            "Costo:",
+            reserva.procesar()
+        )
 
-    reserva.cancelar()
+        print("\n--- PRUEBA DE EXCEPCIONES ---")
 
-    print(reserva)
+        try:
+
+            reserva.confirmar()
+
+        except OperationError as e:
+
+            print(
+                f"Excepción controlada: {e}"
+            )
+
+        finally:
+
+            print(
+                "Bloque finally ejecutado."
+            )
+
+    except ValidationError as e:
+
+        print(
+            f"Error de validación: {e}"
+        )
