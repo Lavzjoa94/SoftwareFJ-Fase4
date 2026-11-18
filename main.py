@@ -156,8 +156,7 @@ class Servicio(ABC):
 # =============================================================================
 # SERVICIO DE RESERVA DE SALA
 # =============================================================================
-# Permite gestionar reservas de salas para reuniones,
-# capacitaciones y eventos.
+# Permite gestionar reservas de salas para reuniones y eventos.
 # =============================================================================
 
 class ReservaSala(Servicio):
@@ -183,8 +182,7 @@ class ReservaSala(Servicio):
 # =============================================================================
 # SERVICIO DE ALQUILER DE EQUIPOS
 # =============================================================================
-# Permite alquilar equipos tecnológicos durante
-# un número determinado de días.
+# Permite alquilar equipos tecnológicos por días.
 # =============================================================================
 
 class AlquilerEquipo(Servicio):
@@ -204,6 +202,32 @@ class AlquilerEquipo(Servicio):
         return (
             f"Servicio: {self.nombre} | "
             f"Días de alquiler: {self.dias}"
+        )
+
+
+# =============================================================================
+# SERVICIO DE ASESORÍA ESPECIALIZADA
+# =============================================================================
+# Permite contratar asesorías profesionales por horas.
+# =============================================================================
+
+class Asesoria(Servicio):
+
+    def __init__(self, nombre, precio_base, horas):
+
+        super().__init__(nombre, precio_base)
+
+        self.horas = horas
+
+    def calcular_costo(self):
+
+        return self.precio_base * self.horas
+
+    def describir(self):
+
+        return (
+            f"Servicio: {self.nombre} | "
+            f"Horas contratadas: {self.horas}"
         )
 
 
@@ -231,6 +255,12 @@ if __name__ == "__main__":
         3
     )
 
+    asesoria = Asesoria(
+        "Python",
+        80,
+        2
+    )
+
     print(cliente)
 
     print("\n--- SERVICIOS DISPONIBLES ---")
@@ -242,3 +272,8 @@ if __name__ == "__main__":
 
     print(equipo.describir())
     print("Costo:", equipo.calcular_costo())
+
+    print()
+
+    print(asesoria.describir())
+    print("Costo:", asesoria.calcular_costo())
