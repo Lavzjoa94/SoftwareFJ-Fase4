@@ -4,12 +4,41 @@
 # FASE 4 - PROGRAMACIÓN ORIENTADA A OBJETOS
 # =============================================================================
 
+"""
+Este sistema permite gestionar clientes, servicios y reservas
+sin utilizar bases de datos.
+
+Conceptos aplicados:
+
+- Abstracción
+- Encapsulación
+- Herencia
+- Polimorfismo
+- Sobrecarga simulada
+- Excepciones personalizadas
+- Encadenamiento de excepciones
+- Manejo de logs
+- Manejo avanzado de excepciones
+"""
+
 from abc import ABC, abstractmethod
 import logging
 
 
 # =============================================================================
 # CONFIGURACIÓN DEL SISTEMA DE LOGS
+# =============================================================================
+# Todos los eventos importantes del sistema serán almacenados
+# en el archivo software_fj.log.
+#
+# Se registran:
+# - Clientes creados.
+# - Servicios creados.
+# - Reservas creadas.
+# - Confirmaciones.
+# - Cancelaciones.
+# - Procesamientos.
+# - Errores.
 # =============================================================================
 
 logging.basicConfig(
@@ -27,19 +56,39 @@ logger = logging.getLogger("SoftwareFJ")
 # =============================================================================
 
 class SoftwareFJError(Exception):
+    """
+    Excepción base del sistema.
+
+    Todas las excepciones personalizadas
+    heredan de esta clase.
+    """
     pass
 
 
 class ValidationError(SoftwareFJError):
+    """
+    Se utiliza cuando los datos ingresados
+    no cumplen las reglas de validación.
+    """
     pass
 
 
 class OperationError(SoftwareFJError):
+    """
+    Se genera cuando se intenta realizar
+    una operación no permitida según el
+    estado actual del sistema.
+    """
     pass
 
 
 # =============================================================================
 # CLASE ABSTRACTA ENTIDAD
+# =============================================================================
+# Representa cualquier entidad del sistema.
+#
+# Todas las clases derivadas deben implementar
+# el método validar().
 # =============================================================================
 
 class Entidad(ABC):
@@ -52,11 +101,19 @@ class Entidad(ABC):
 # =============================================================================
 # CLASE CLIENTE
 # =============================================================================
+# Representa los clientes registrados en Software FJ.
+#
+# Implementa:
+# - Encapsulación.
+# - Validación de datos.
+# - Registro en logs.
+# =============================================================================
 
 class Cliente(Entidad):
 
     def __init__(self, nombre, correo, telefono):
 
+        # Atributos privados.
         self.__nombre = nombre
         self.__correo = correo
         self.__telefono = telefono
@@ -81,16 +138,19 @@ class Cliente(Entidad):
 
     def validar(self):
 
+        # Validación del nombre.
         if len(self.__nombre.strip()) < 3:
             raise ValidationError(
                 "El nombre debe tener al menos 3 caracteres."
             )
 
+        # Validación del correo electrónico.
         if "@" not in self.__correo:
             raise ValidationError(
                 "Correo electrónico inválido."
             )
 
+        # Validación del teléfono.
         if len(self.__telefono) < 10:
             raise ValidationError(
                 "Número telefónico inválido."
@@ -107,6 +167,14 @@ class Cliente(Entidad):
 
 # =============================================================================
 # CLASE ABSTRACTA SERVICIO
+# =============================================================================
+# Define el comportamiento común para todos los servicios.
+#
+# Toda clase derivada debe implementar:
+# - calcular_costo()
+# - describir()
+#
+# Esta clase demuestra abstracción y polimorfismo.
 # =============================================================================
 
 class Servicio(ABC):
@@ -137,6 +205,9 @@ class Servicio(ABC):
     # =========================================================================
     # SOBRECARGA SIMULADA
     # =========================================================================
+    # Utiliza parámetros opcionales para calcular un costo
+    # aplicando descuentos e impuestos.
+    # =========================================================================
 
     def calcular_costo_con_descuento(
         self,
@@ -166,6 +237,9 @@ class Servicio(ABC):
 # =============================================================================
 # SERVICIO DE RESERVA DE SALA
 # =============================================================================
+# Permite reservar salas para reuniones,
+# capacitaciones o eventos.
+# =============================================================================
 
 class ReservaSala(Servicio):
 
@@ -189,6 +263,10 @@ class ReservaSala(Servicio):
 
 # =============================================================================
 # SERVICIO DE ALQUILER DE EQUIPOS
+# =============================================================================
+# Permite alquilar equipos tecnológicos.
+#
+# El costo depende del número de días.
 # =============================================================================
 
 class AlquilerEquipo(Servicio):
@@ -214,6 +292,8 @@ class AlquilerEquipo(Servicio):
 # =============================================================================
 # SERVICIO DE ASESORÍA ESPECIALIZADA
 # =============================================================================
+# Servicio profesional contratado por horas.
+# =============================================================================
 
 class Asesoria(Servicio):
 
@@ -238,6 +318,15 @@ class Asesoria(Servicio):
 # =============================================================================
 # CLASE RESERVA
 # =============================================================================
+# Relaciona un cliente con un servicio.
+#
+# Funcionalidades:
+# - Confirmar reserva.
+# - Cancelar reserva.
+# - Procesar reserva.
+# - Validar duración.
+# - Controlar estados.
+# =============================================================================
 
 class Reserva:
 
@@ -258,6 +347,7 @@ class Reserva:
             f"Reserva creada para {cliente.nombre}"
         )
 
+    # Confirma una reserva.
     def confirmar(self):
 
         if self.estado == "CONFIRMADA":
@@ -271,6 +361,7 @@ class Reserva:
             f"Reserva confirmada para {self.cliente.nombre}"
         )
 
+    # Cancela una reserva.
     def cancelar(self):
 
         if self.estado == "CANCELADA":
@@ -284,6 +375,7 @@ class Reserva:
             f"Reserva cancelada para {self.cliente.nombre}"
         )
 
+    # Procesa una reserva confirmada.
     def procesar(self):
 
         if self.estado != "CONFIRMADA":
@@ -301,6 +393,12 @@ class Reserva:
 
     # =========================================================================
     # ENCADENAMIENTO DE EXCEPCIONES
+    # =========================================================================
+    # Demuestra la utilización de:
+    #
+    # raise ValidationError(...) from e
+    #
+    # exigida por la actividad.
     # =========================================================================
 
     def validar_duracion_texto(self, valor):
@@ -327,10 +425,17 @@ class Reserva:
 # =============================================================================
 # PRUEBAS DEL SISTEMA
 # =============================================================================
+# En esta sección se ejecutan pruebas válidas e inválidas
+# para demostrar el funcionamiento del sistema.
+# =============================================================================
 
 if __name__ == "__main__":
 
     try:
+
+        # ---------------------------------------------------------------------
+        # CREACIÓN DE CLIENTE
+        # ---------------------------------------------------------------------
 
         cliente = Cliente(
             "Luis Villada",
@@ -338,11 +443,19 @@ if __name__ == "__main__":
             "3001234567"
         )
 
+        # ---------------------------------------------------------------------
+        # CREACIÓN DE SERVICIO
+        # ---------------------------------------------------------------------
+
         sala = ReservaSala(
             "Sala Premium",
             100,
             20
         )
+
+        # ---------------------------------------------------------------------
+        # CREACIÓN DE RESERVA
+        # ---------------------------------------------------------------------
 
         reserva = Reserva(
             cliente,
@@ -365,6 +478,10 @@ if __name__ == "__main__":
             reserva.procesar()
         )
 
+        # ---------------------------------------------------------------------
+        # SOBRECARGA SIMULADA
+        # ---------------------------------------------------------------------
+
         print("\n--- PRUEBA DE DESCUENTOS ---")
 
         print(
@@ -380,11 +497,15 @@ if __name__ == "__main__":
             )
         )
 
+        # ---------------------------------------------------------------------
+        # TRY / EXCEPT / ELSE
+        # ---------------------------------------------------------------------
+
         print("\n--- PRUEBA TRY / EXCEPT / ELSE ---")
 
         try:
 
-            cliente_prueba = Cliente(
+            Cliente(
                 "Carlos",
                 "carlos@email.com",
                 "3019998888"
@@ -392,15 +513,17 @@ if __name__ == "__main__":
 
         except ValidationError as e:
 
-            print(
-                f"Error: {e}"
-            )
+            print(f"Error: {e}")
 
         else:
 
             print(
                 "Cliente registrado correctamente."
             )
+
+        # ---------------------------------------------------------------------
+        # ENCADENAMIENTO DE EXCEPCIONES
+        # ---------------------------------------------------------------------
 
         print("\n--- PRUEBA DE ENCADENAMIENTO DE EXCEPCIONES ---")
 
@@ -414,9 +537,12 @@ if __name__ == "__main__":
                 f"Error encadenado: {e}"
             )
 
+        # ---------------------------------------------------------------------
+        # VALIDACIONES INVÁLIDAS
+        # ---------------------------------------------------------------------
+
         print("\n--- PRUEBAS DE VALIDACIÓN DE DATOS ---")
 
-        # Nombre inválido
         try:
 
             Cliente(
@@ -431,7 +557,6 @@ if __name__ == "__main__":
                 f"Validación nombre: {e}"
             )
 
-        # Correo inválido
         try:
 
             Cliente(
@@ -446,7 +571,6 @@ if __name__ == "__main__":
                 f"Validación correo: {e}"
             )
 
-        # Teléfono inválido
         try:
 
             Cliente(
@@ -461,7 +585,6 @@ if __name__ == "__main__":
                 f"Validación teléfono: {e}"
             )
 
-        # Reserva inválida
         try:
 
             Reserva(
@@ -475,6 +598,10 @@ if __name__ == "__main__":
             print(
                 f"Validación reserva: {e}"
             )
+
+        # ---------------------------------------------------------------------
+        # TRY / EXCEPT / FINALLY
+        # ---------------------------------------------------------------------
 
         print("\n--- PRUEBA DE EXCEPCIONES ---")
 
