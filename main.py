@@ -51,6 +51,9 @@ class Entidad(ABC):
 # =============================================================================
 # CLASE CLIENTE
 # =============================================================================
+# Representa los clientes registrados en el sistema.
+# Implementa encapsulación mediante atributos privados.
+# =============================================================================
 
 class Cliente(Entidad):
 
@@ -61,6 +64,10 @@ class Cliente(Entidad):
         self.__telefono = telefono
 
         self.validar()
+
+        logger.info(
+            f"Cliente registrado: {self.__nombre}"
+        )
 
     @property
     def nombre(self):
@@ -103,6 +110,8 @@ class Cliente(Entidad):
 # =============================================================================
 # CLASE ABSTRACTA SERVICIO
 # =============================================================================
+# Define el comportamiento común de todos los servicios.
+# =============================================================================
 
 class Servicio(ABC):
 
@@ -112,6 +121,10 @@ class Servicio(ABC):
         self.precio_base = precio_base
 
         self.validar()
+
+        logger.info(
+            f"Servicio creado: {self.nombre}"
+        )
 
     def validar(self):
 
@@ -124,6 +137,29 @@ class Servicio(ABC):
             raise ValidationError(
                 "El precio base debe ser mayor que cero."
             )
+
+    # =========================================================================
+    # SOBRECARGA SIMULADA
+    # =========================================================================
+    # Permite calcular costos aplicando descuentos e impuestos.
+    # Utiliza parámetros opcionales para simular sobrecarga.
+    # =========================================================================
+
+    def calcular_costo_con_descuento(
+        self,
+        descuento=0,
+        impuesto=0
+    ):
+
+        costo = self.precio_base
+
+        if descuento > 0:
+            costo -= costo * (descuento / 100)
+
+        if impuesto > 0:
+            costo += costo * (impuesto / 100)
+
+        return round(costo, 2)
 
     @abstractmethod
     def calcular_costo(self):
@@ -299,6 +335,21 @@ if __name__ == "__main__":
         print(
             "Costo:",
             reserva.procesar()
+        )
+
+        print("\n--- PRUEBA DE DESCUENTOS ---")
+
+        print(
+            "Costo con 10% descuento:",
+            sala.calcular_costo_con_descuento(10)
+        )
+
+        print(
+            "Costo con 10% descuento y 19% impuesto:",
+            sala.calcular_costo_con_descuento(
+                descuento=10,
+                impuesto=19
+            )
         )
 
         print("\n--- PRUEBA DE EXCEPCIONES ---")
