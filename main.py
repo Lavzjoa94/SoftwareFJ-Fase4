@@ -11,6 +11,9 @@ import logging
 # =============================================================================
 # CONFIGURACIÓN DEL SISTEMA DE LOGS
 # =============================================================================
+# Todos los eventos importantes serán almacenados en el archivo:
+# software_fj.log
+# =============================================================================
 
 logging.basicConfig(
     filename="software_fj.log",
@@ -37,6 +40,9 @@ class ValidationError(SoftwareFJError):
 # =============================================================================
 # CLASE ABSTRACTA ENTIDAD
 # =============================================================================
+# Representa una entidad genérica del sistema.
+# Todas las clases hijas deben implementar el método validar().
+# =============================================================================
 
 class Entidad(ABC):
 
@@ -47,6 +53,9 @@ class Entidad(ABC):
 
 # =============================================================================
 # CLASE CLIENTE
+# =============================================================================
+# Representa los clientes registrados en el sistema.
+# Implementa encapsulación mediante atributos privados.
 # =============================================================================
 
 class Cliente(Entidad):
@@ -104,6 +113,11 @@ class Cliente(Entidad):
 # =============================================================================
 # CLASE ABSTRACTA SERVICIO
 # =============================================================================
+# Define el comportamiento común para todos los servicios.
+# Toda clase hija debe implementar:
+# - calcular_costo()
+# - describir()
+# =============================================================================
 
 class Servicio(ABC):
 
@@ -143,7 +157,7 @@ class Servicio(ABC):
 # SERVICIO DE RESERVA DE SALA
 # =============================================================================
 # Permite gestionar reservas de salas para reuniones,
-# capacitaciones o eventos.
+# capacitaciones y eventos.
 # =============================================================================
 
 class ReservaSala(Servicio):
@@ -167,6 +181,33 @@ class ReservaSala(Servicio):
 
 
 # =============================================================================
+# SERVICIO DE ALQUILER DE EQUIPOS
+# =============================================================================
+# Permite alquilar equipos tecnológicos durante
+# un número determinado de días.
+# =============================================================================
+
+class AlquilerEquipo(Servicio):
+
+    def __init__(self, nombre, precio_base, dias):
+
+        super().__init__(nombre, precio_base)
+
+        self.dias = dias
+
+    def calcular_costo(self):
+
+        return self.precio_base * self.dias
+
+    def describir(self):
+
+        return (
+            f"Servicio: {self.nombre} | "
+            f"Días de alquiler: {self.dias}"
+        )
+
+
+# =============================================================================
 # PRUEBA DEL SISTEMA
 # =============================================================================
 
@@ -184,13 +225,20 @@ if __name__ == "__main__":
         20
     )
 
+    equipo = AlquilerEquipo(
+        "Computador",
+        50,
+        3
+    )
+
     print(cliente)
 
-    print(
-        sala.describir()
-    )
+    print("\n--- SERVICIOS DISPONIBLES ---")
 
-    print(
-        "Costo:",
-        sala.calcular_costo()
-    )
+    print(sala.describir())
+    print("Costo:", sala.calcular_costo())
+
+    print()
+
+    print(equipo.describir())
+    print("Costo:", equipo.calcular_costo())
