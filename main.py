@@ -7,6 +7,11 @@
 from abc import ABC, abstractmethod
 import logging
 
+
+# =============================================================================
+# CONFIGURACIÓN DEL SISTEMA DE LOGS
+# =============================================================================
+
 logging.basicConfig(
     filename="software_fj.log",
     level=logging.INFO,
@@ -129,6 +134,10 @@ class Servicio(ABC):
                 "El precio base debe ser mayor que cero."
             )
 
+    # =========================================================================
+    # SOBRECARGA SIMULADA
+    # =========================================================================
+
     def calcular_costo_con_descuento(
         self,
         descuento=0,
@@ -242,6 +251,7 @@ class Reserva:
         self.cliente = cliente
         self.servicio = servicio
         self.duracion = duracion
+
         self.estado = "PENDIENTE"
 
         logger.info(
@@ -288,6 +298,22 @@ class Reserva:
         )
 
         return costo
+
+    # =========================================================================
+    # ENCADENAMIENTO DE EXCEPCIONES
+    # =========================================================================
+
+    def validar_duracion_texto(self, valor):
+
+        try:
+
+            return int(valor)
+
+        except ValueError as e:
+
+            raise ValidationError(
+                "La duración debe ser un número entero."
+            ) from e
 
     def __str__(self):
 
@@ -374,6 +400,18 @@ if __name__ == "__main__":
 
             print(
                 "Cliente registrado correctamente."
+            )
+
+        print("\n--- PRUEBA DE ENCADENAMIENTO DE EXCEPCIONES ---")
+
+        try:
+
+            reserva.validar_duracion_texto("abc")
+
+        except ValidationError as e:
+
+            print(
+                f"Error encadenado: {e}"
             )
 
         print("\n--- PRUEBA DE EXCEPCIONES ---")
