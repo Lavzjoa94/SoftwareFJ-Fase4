@@ -210,7 +210,7 @@ class Asesoria(Servicio):
 # CLASE RESERVA
 # =============================================================================
 # Relaciona un cliente con un servicio.
-# Permite gestionar el estado de la reserva.
+# Permite confirmar, cancelar y procesar reservas.
 # =============================================================================
 
 class Reserva:
@@ -225,7 +225,6 @@ class Reserva:
         self.cliente = cliente
         self.servicio = servicio
         self.duracion = duracion
-
         self.estado = "PENDIENTE"
 
     def confirmar(self):
@@ -236,6 +235,15 @@ class Reserva:
             )
 
         self.estado = "CONFIRMADA"
+
+    def cancelar(self):
+
+        if self.estado == "CANCELADA":
+            raise OperationError(
+                "La reserva ya fue cancelada."
+            )
+
+        self.estado = "CANCELADA"
 
     def procesar(self):
 
@@ -293,3 +301,9 @@ if __name__ == "__main__":
         "Costo:",
         reserva.procesar()
     )
+
+    print("\n--- PRUEBA DE CANCELACIÓN ---")
+
+    reserva.cancelar()
+
+    print(reserva)
