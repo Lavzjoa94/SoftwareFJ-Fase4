@@ -52,7 +52,6 @@ class Entidad(ABC):
 # CLASE CLIENTE
 # =============================================================================
 # Representa los clientes registrados en el sistema.
-# Implementa encapsulación mediante atributos privados.
 # =============================================================================
 
 class Cliente(Entidad):
@@ -110,8 +109,6 @@ class Cliente(Entidad):
 # =============================================================================
 # CLASE ABSTRACTA SERVICIO
 # =============================================================================
-# Define el comportamiento común de todos los servicios.
-# =============================================================================
 
 class Servicio(ABC):
 
@@ -137,13 +134,6 @@ class Servicio(ABC):
             raise ValidationError(
                 "El precio base debe ser mayor que cero."
             )
-
-    # =========================================================================
-    # SOBRECARGA SIMULADA
-    # =========================================================================
-    # Permite calcular costos aplicando descuentos e impuestos.
-    # Utiliza parámetros opcionales para simular sobrecarga.
-    # =========================================================================
 
     def calcular_costo_con_descuento(
         self,
@@ -260,6 +250,10 @@ class Reserva:
         self.duracion = duracion
         self.estado = "PENDIENTE"
 
+        logger.info(
+            f"Reserva creada para {cliente.nombre}"
+        )
+
     def confirmar(self):
 
         if self.estado == "CONFIRMADA":
@@ -268,6 +262,10 @@ class Reserva:
             )
 
         self.estado = "CONFIRMADA"
+
+        logger.info(
+            f"Reserva confirmada para {self.cliente.nombre}"
+        )
 
     def cancelar(self):
 
@@ -278,6 +276,10 @@ class Reserva:
 
         self.estado = "CANCELADA"
 
+        logger.info(
+            f"Reserva cancelada para {self.cliente.nombre}"
+        )
+
     def procesar(self):
 
         if self.estado != "CONFIRMADA":
@@ -285,7 +287,13 @@ class Reserva:
                 "Solo se pueden procesar reservas confirmadas."
             )
 
-        return self.servicio.calcular_costo()
+        costo = self.servicio.calcular_costo()
+
+        logger.info(
+            f"Reserva procesada correctamente. Costo: {costo}"
+        )
+
+        return costo
 
     def __str__(self):
 
@@ -371,6 +379,8 @@ if __name__ == "__main__":
             )
 
     except ValidationError as e:
+
+        logger.error(str(e))
 
         print(
             f"Error de validación: {e}"
