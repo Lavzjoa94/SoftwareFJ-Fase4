@@ -414,6 +414,68 @@ if __name__ == "__main__":
                 f"Error encadenado: {e}"
             )
 
+        print("\n--- PRUEBAS DE VALIDACIÓN DE DATOS ---")
+
+        # Nombre inválido
+        try:
+
+            Cliente(
+                "Lu",
+                "luis@email.com",
+                "3001234567"
+            )
+
+        except ValidationError as e:
+
+            print(
+                f"Validación nombre: {e}"
+            )
+
+        # Correo inválido
+        try:
+
+            Cliente(
+                "Luis Villada",
+                "correoinvalido",
+                "3001234567"
+            )
+
+        except ValidationError as e:
+
+            print(
+                f"Validación correo: {e}"
+            )
+
+        # Teléfono inválido
+        try:
+
+            Cliente(
+                "Luis Villada",
+                "luis@email.com",
+                "123"
+            )
+
+        except ValidationError as e:
+
+            print(
+                f"Validación teléfono: {e}"
+            )
+
+        # Reserva inválida
+        try:
+
+            Reserva(
+                cliente,
+                sala,
+                0
+            )
+
+        except ValidationError as e:
+
+            print(
+                f"Validación reserva: {e}"
+            )
+
         print("\n--- PRUEBA DE EXCEPCIONES ---")
 
         try:
