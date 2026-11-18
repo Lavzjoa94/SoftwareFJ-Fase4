@@ -48,9 +48,6 @@ class Entidad(ABC):
 # =============================================================================
 # CLASE CLIENTE
 # =============================================================================
-# Representa los clientes registrados en el sistema.
-# Implementa encapsulación mediante atributos privados.
-# =============================================================================
 
 class Cliente(Entidad):
 
@@ -105,6 +102,47 @@ class Cliente(Entidad):
 
 
 # =============================================================================
+# CLASE ABSTRACTA SERVICIO
+# =============================================================================
+# Define el comportamiento común de todos los servicios.
+# Toda clase hija deberá calcular su costo y describirse.
+# =============================================================================
+
+class Servicio(ABC):
+
+    def __init__(self, nombre, precio_base):
+
+        self.nombre = nombre
+        self.precio_base = precio_base
+
+        self.validar()
+
+        logger.info(
+            f"Servicio creado: {self.nombre}"
+        )
+
+    def validar(self):
+
+        if len(self.nombre.strip()) < 3:
+            raise ValidationError(
+                "El nombre del servicio debe tener al menos 3 caracteres."
+            )
+
+        if self.precio_base <= 0:
+            raise ValidationError(
+                "El precio base debe ser mayor que cero."
+            )
+
+    @abstractmethod
+    def calcular_costo(self):
+        pass
+
+    @abstractmethod
+    def describir(self):
+        pass
+
+
+# =============================================================================
 # PRUEBA DEL SISTEMA
 # =============================================================================
 
@@ -117,3 +155,7 @@ if __name__ == "__main__":
     )
 
     print(cliente)
+
+    print(
+        "Clase Servicio creada correctamente"
+    )
