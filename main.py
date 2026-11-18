@@ -104,9 +104,6 @@ class Cliente(Entidad):
 # =============================================================================
 # CLASE ABSTRACTA SERVICIO
 # =============================================================================
-# Define el comportamiento común de todos los servicios.
-# Toda clase hija deberá calcular su costo y describirse.
-# =============================================================================
 
 class Servicio(ABC):
 
@@ -143,6 +140,33 @@ class Servicio(ABC):
 
 
 # =============================================================================
+# SERVICIO DE RESERVA DE SALA
+# =============================================================================
+# Permite gestionar reservas de salas para reuniones,
+# capacitaciones o eventos.
+# =============================================================================
+
+class ReservaSala(Servicio):
+
+    def __init__(self, nombre, precio_base, capacidad):
+
+        super().__init__(nombre, precio_base)
+
+        self.capacidad = capacidad
+
+    def calcular_costo(self):
+
+        return self.precio_base + (self.capacidad * 5)
+
+    def describir(self):
+
+        return (
+            f"Servicio: {self.nombre} | "
+            f"Capacidad: {self.capacidad} personas"
+        )
+
+
+# =============================================================================
 # PRUEBA DEL SISTEMA
 # =============================================================================
 
@@ -154,8 +178,19 @@ if __name__ == "__main__":
         "3001234567"
     )
 
+    sala = ReservaSala(
+        "Sala Premium",
+        100,
+        20
+    )
+
     print(cliente)
 
     print(
-        "Clase Servicio creada correctamente"
+        sala.describir()
+    )
+
+    print(
+        "Costo:",
+        sala.calcular_costo()
     )
